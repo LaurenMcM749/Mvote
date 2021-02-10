@@ -452,7 +452,7 @@ int main(int argc, char **argv) {
                 ht_set(ht,key,last,first,zip,voted); //This does work! This puts it in
                 ht_dump(ht);
             }
-        //Delete - d
+        //d- Delete
         else if (strcmp(cmd, "d") == 0) {
                 char *arg = strtok(0, DELIMS);
                 printf("%s\n",arg); //get to here in code
@@ -468,55 +468,92 @@ int main(int argc, char **argv) {
             }
         //r - Mark as YES
         else if (strcmp(cmd, "r") == 0) {
-            //Get fifth element
-            //Check if YES
-            //If YES - display message
-            //If no -
-            //Delete fifth element
-            //Change to YES
             int i;
-            char *voted1;
-            char *entry;
-            char yes[]="has voted";
-            char no[]="has not voted";
+            char yes[]="This user has voted already.";
+            char changed[]="System has changed vote to YES";
             char *arg = strtok(0, DELIMS);
-            char else1[]="if 1 this is bug";
-            printf("%s\n",arg); //get to here in code
-            if (!arg) //if no arguments //OK
+            if (!arg) //if no arguments
             {
                 fprintf(stderr, "r- missing argument\n");
                 break;
             } 
             else 
-                //Need to get entry!! This just has one argument
-                entry = ht_get(ht,arg); //Returns char *
-                printf("%s",entry);
-                // char *a = malloc(256);
-                // strcpy(a, "This is a string");
-                // entry->voted = "YES";
-                i = 0;
-                while (entry != NULL){
-                    //Use entry->voted
-                   printf("%i\n",i);
-                    if(i==4){
-                        printf("%s\n",else1);
-                        voted1=entry;
-                        printf("%s\n",else1);
+                //Loop through hash table
+                for (int i = 0; i < TABLE_SIZE; ++i) {
+                    entry_t *entry = ht->entries[i];
+                    if (entry == NULL) {
+                        continue;
                     }
-                    entry = strtok(NULL,DELIMS); //This is the bug for some reason
-    
-                    i++;
+                for(;;) {
+                    if(strcmp(entry->key, arg) == 0){
+                        printf("voted entry = %s\n", entry->voted);
+                        if (strcmp(entry->voted, "YES") == 0){ //If voted YES, no action needed. Print message
+                            printf("%s\n",yes);
+                            break;
+                        }
+                        else
+                            //Change string to YES and display changed
+                            entry->voted="YES";
+                            printf("%s\n", changed);
+                            break;
+                      }  
+                      if (entry->next == NULL) {
+                            break;
+                        }
+                      entry = entry->next;
                 }
-                printf("%s\n",voted1);
-                printf("%s\n", else1);
-                if (strcmp(voted1, "YES") == 0){ //SEG FAULT HERE
-                    printf("%s\n",yes);
-                }
-                else
-                    printf("%s\n",no);
-                
             }
-           //Number of people who voted - v 
+        } 
+        //bv <fileofkeys> - Bulk-vote for all the keys
+        else if (strcmp(cmd, "bv") == 0) {
+            int i;
+            char yes[]="This user has voted already.";
+            char changed[]="System has changed vote to YES";
+            char *arg = strtok(0, DELIMS);
+            //Read file
+            fpointer = fopen(arg,"r"); 
+             //Get line by line
+             while(!feof(fpointer)){ //file end of file - while not end of file
+                //Run this loop from beginning of file to the end
+                //Default- file pointer starts at the beginning
+                fgets(singleLine, 150, fpointer); //gets one line from FILE, not from standard input like keyboard
+                token = strtok(singleLine, DELIMS);
+                printf("%s",token);
+             }
+            //Do r
+            // if (!arg) //if no arguments
+            // {
+            //     fprintf(stderr, "bv- missing file argument\n");
+            //     break;
+            // } 
+            // else 
+            //     //Loop through hash table
+            //     for (int i = 0; i < TABLE_SIZE; ++i) {
+            //         entry_t *entry = ht->entries[i];
+            //         if (entry == NULL) {
+            //             continue;
+            //         }
+            //     for(;;) {
+            //         if(strcmp(entry->key, arg) == 0){
+            //             printf("voted entry = %s\n", entry->voted);
+            //             if (strcmp(entry->voted, "YES") == 0){ //If voted YES, no action needed. Print message
+            //                 printf("%s\n",yes);
+            //                 break;
+            //             }
+            //             else
+            //                 //Change string to YES and display changed
+            //                 entry->voted="YES";
+            //                 printf("%s\n", changed);
+            //                 break;
+            //           }  
+            //           if (entry->next == NULL) {
+            //                 break;
+            //             }
+            //           entry = entry->next;
+            //     }
+            // }
+        } 
+           //V - Number of people who voted 
            else if (strcmp(cmd, "v") == 0) {
                 int i;
                 int c;
@@ -547,6 +584,7 @@ int main(int argc, char **argv) {
                 } printf("%i",c);    
             }
         }
+        //Perc - show percent who voted YES
         else if (strcmp(cmd, "perc") == 0) {
                 float i;
                 float c;
