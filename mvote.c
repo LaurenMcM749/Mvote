@@ -326,47 +326,39 @@ int main(int argc, char **argv) {
     char *zip;
     char *voted;
     fpointer = fopen("voters50.csv","r"); 
-    //TODO - Write in vote as fifth and set to N
-    //function = opening up notepad program, opens up own version of notepad
-    // first parameter = "file, open", last is what you want to do with it
-    // to display contents in file, need to first store content in char array
+    //Read file
+    //Tokenize line
+    //For each line - assign key,first,last,zip
+    //Insert each entry (use i)
+    //Set entry->voted = "NO"
     char singleLine[150];
-    // while(!feof(fpointer)){ //file end of file - while not end of file
-    //     //Run this loop from beginning of file to the end
-    //     //Default- file pointer starts at the beginning
-    //     fgets(singleLine, 150, fpointer); //gets one line from FILE, not from standard input like keyboard
-    //     token = strtok(singleLine, " ");
-    //     i=0;
-    //     while (token != NULL){
-    //         printf("%s\n", token); 
-    //         if (i==0){
-    //             key = token;
-    //         }
-    //         if (i == 1){
-    //             last = token;
-    //         }
-    //         if (i == 2){
-    //             first = token;
-    //         }
-    //         if (i == 3){
-    //             zip = token;
-    //         }
-    //         // if (i == 4){
-    //         //     voted = token;
-    //         // }
-    //         token = strtok(NULL, " "); 
-    //         i++;
-    //     }
-    //    //automatically adds content to new line every time
-    //     //get 5 things
-    //     // loop through 4 things
-    //     // 1=rin, 2=zip
-    //     //Write yes to voted
-    //     // Maybe segmentation fault because of voted
-    //     // ht_set(ht, key, last, first, zip, voted);
-
-    // }
-    // fclose(fpointer);
+    while(!feof(fpointer)){ //file end of file - while not end of file
+        //Run this loop from beginning of file to the end
+        //Default- file pointer starts at the beginning
+        fgets(singleLine, 150, fpointer); //gets one line from FILE, not from standard input like keyboard
+        token = strtok(singleLine, " ");
+        i=0;
+        while (token != NULL){
+            printf("%s\n", token); 
+            if (i==0){
+                key = token;
+            }
+            if (i == 1){
+                last = token;
+            }
+            if (i == 2){
+                first = token;
+            }
+            if (i == 3){
+                zip = token;
+            }
+            token = strtok(NULL, " "); 
+            i++;
+        }
+        strcpy(voted,"NO");
+        ht_set(ht, key, last, first, zip, voted);
+    }
+    fclose(fpointer);
 
     //char *strtok(char *str, const char *delim) - breaks string str into a series of tokens using the delimiter delim.
     //strtok(string,string that contains each character we want to break at)
