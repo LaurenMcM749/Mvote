@@ -510,49 +510,45 @@ int main(int argc, char **argv) {
             char yes[]="This user has voted already.";
             char changed[]="System has changed vote to YES";
             char *arg = strtok(0, DELIMS);
+            if (!arg) //if no arguments
+            {
+                fprintf(stderr, "bv- missing file argument\n");
+                break;
+            } 
             //Read file
             fpointer = fopen(arg,"r"); 
              //Get line by line
              while(!feof(fpointer)){ //file end of file - while not end of file
-                //Run this loop from beginning of file to the end
-                //Default- file pointer starts at the beginning
                 fgets(singleLine, 150, fpointer); //gets one line from FILE, not from standard input like keyboard
                 token = strtok(singleLine, DELIMS);
-                printf("%s",token);
-             }
-            //Do r
-            // if (!arg) //if no arguments
-            // {
-            //     fprintf(stderr, "bv- missing file argument\n");
-            //     break;
-            // } 
-            // else 
-            //     //Loop through hash table
-            //     for (int i = 0; i < TABLE_SIZE; ++i) {
-            //         entry_t *entry = ht->entries[i];
-            //         if (entry == NULL) {
-            //             continue;
-            //         }
-            //     for(;;) {
-            //         if(strcmp(entry->key, arg) == 0){
-            //             printf("voted entry = %s\n", entry->voted);
-            //             if (strcmp(entry->voted, "YES") == 0){ //If voted YES, no action needed. Print message
-            //                 printf("%s\n",yes);
-            //                 break;
-            //             }
-            //             else
-            //                 //Change string to YES and display changed
-            //                 entry->voted="YES";
-            //                 printf("%s\n", changed);
-            //                 break;
-            //           }  
-            //           if (entry->next == NULL) {
-            //                 break;
-            //             }
-            //           entry = entry->next;
-            //     }
-            // }
-        } 
+                //Loop through hash table
+                for (int i = 0; i < TABLE_SIZE; ++i) {
+                    entry_t *entry = ht->entries[i];
+                    if (entry == NULL) {
+                        continue;
+                    }
+                for(;;) {
+                    if(strcmp(entry->key, token) == 0){
+                        printf("voted entry = %s\n", entry->voted);
+                        if (strcmp(entry->voted, "YES") == 0){ //If voted YES, no action needed. Print message
+                            printf("%s\n",yes);
+                            break;
+                        }
+                        else
+                            //Change string to YES and display changed
+                            entry->voted="YES";
+                            printf("%s\n", changed);
+                            break;
+                      }  
+                      if (entry->next == NULL) {
+                            break;
+                        }
+                      entry = entry->next;
+                }
+            }
+         }      
+    } 
+        
            //V - Number of people who voted 
            else if (strcmp(cmd, "v") == 0) {
                 int i;
