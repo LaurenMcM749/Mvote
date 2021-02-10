@@ -304,7 +304,6 @@ int main(int argc, char **argv) {
     char *record;
     char line[MAX_LENGTH];
 
-
     //Create hash table at variable ht
     ht_t *ht = ht_create();
     ht_set(ht,"rin","mcmillen","lauren","zip","n");
@@ -313,9 +312,6 @@ int main(int argc, char **argv) {
     ht_dump(ht);
 
     //Populate hash table with file values
-    //Integrate with set function
-    // Use strtok to break up by spaces
-    // Add voted space
     FILE *fpointer;
     char *token;
     int i;
@@ -325,40 +321,73 @@ int main(int argc, char **argv) {
     char *last;
     char *zip;
     char *voted;
-    fpointer = fopen("voters50.csv","r"); 
-    //Read file
-    //Tokenize line
-    //For each line - assign key,first,last,zip
-    //Insert each entry (use i)
-    //Set entry->voted = "NO"
+    const char setno[20]="NO";
+    char bug[]="bug";
+    //Append NO to file
+    fpointer = fopen("voters50.csv","a"); 
     char singleLine[150];
     while(!feof(fpointer)){ //file end of file - while not end of file
         //Run this loop from beginning of file to the end
         //Default- file pointer starts at the beginning
         fgets(singleLine, 150, fpointer); //gets one line from FILE, not from standard input like keyboard
+        //Tokenize line
         token = strtok(singleLine, " ");
         i=0;
         while (token != NULL){
-            printf("%s\n", token); 
-            if (i==0){
-                key = token;
-            }
-            if (i == 1){
-                last = token;
-            }
-            if (i == 2){
-                first = token;
-            }
+            //For each line - assign key,first,last,zip
+            // printf("%s\n", token); //Token = 100108 - KASEY
             if (i == 3){
-                zip = token;
+                fputs("NO",fpointer);
             }
+            printf("%s\n",token);
             token = strtok(NULL, " "); 
             i++;
+            // printf("%i\n",i);
         }
-        strcpy(voted,"NO");
-        ht_set(ht, key, last, first, zip, voted);
+       
     }
     fclose(fpointer);
+
+    //Read file
+    //Make entry with each line
+    // fpointer = fopen("voters50.csv","r"); 
+    // char singleLine[150];
+    // while(!feof(fpointer)){ //file end of file - while not end of file
+    //     //Run this loop from beginning of file to the end
+    //     //Default- file pointer starts at the beginning
+    //     fgets(singleLine, 150, fpointer); //gets one line from FILE, not from standard input like keyboard
+    //     //Tokenize line
+    //     token = strtok(singleLine, " ");
+    //     i=0;
+    //     while (token != NULL){
+    //         //For each line - assign key,first,last,zip
+    //         printf("%s\n", token); 
+    //         if (i==0){
+    //             key = token;
+    //         }
+    //         if (i == 1){
+    //             last = token;
+    //         }
+    //         if (i == 2){
+    //             first = token;
+    //         }
+    //         if (i == 3){
+    //             zip = token;
+    //         }
+    //         if (i == 4){
+    //             voted = token;
+    //         }
+    //         token = strtok(NULL, " "); 
+    //         i++;
+    //     }
+    //     //Set entry->voted = "NO"
+    //     // memset(voted, '\0', sizeof(voted));
+    //     *voted = "NO"; //seg fault here
+    //     printf("%s\n",bug);
+    //     //Insert each entry (use i)
+    //     ht_set(ht, key, last, first, zip, voted);
+    // }
+    // fclose(fpointer);
 
     //char *strtok(char *str, const char *delim) - breaks string str into a series of tokens using the delimiter delim.
     //strtok(string,string that contains each character we want to break at)
