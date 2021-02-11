@@ -358,13 +358,8 @@ int main(int argc, char **argv) {
     fclose(fpointer);
     fclose(outfile);
 
-    ht_t *ht = ht_create();
-    // ht_set(ht,"rin","mcmillen","lauren","zip","n");
-    // ht_set(ht,"rin1","mcmillen","lauren","zip","YES");
-    // ht_set(ht,"rin2","mcmillen","lauren","zip","YES");
-    // ht_dump(ht);
+    ht_t *ht = ht_create(); //Create hash table
 
-    
     //Read file
     //Make entry with each line
     // fpointer = fopen("voters50.csv","r"); 
@@ -373,13 +368,11 @@ int main(int argc, char **argv) {
         //Run this loop from beginning of file to the end
         //Default- file pointer starts at the beginning
         fgets(singleLine, 150, outfile); //gets one line from FILE, not from standard input like keyboard
-       
         //Tokenize line
         token = strtok(singleLine, " ");
         i=0;
         while (token != NULL){
             //For each line - assign key,first,last,zip
-            // printf("%s\n", token); 
             if (i==0){
                 key = token;
             }
@@ -402,9 +395,8 @@ int main(int argc, char **argv) {
         ht_set(ht, key, last, first, zip, voted);
     }
     fclose(outfile);
-
-    //Create hash table at variable ht
  
+    //Print out hash table
     ht_dump(ht);
     
     while (1) {
