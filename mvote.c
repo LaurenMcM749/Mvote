@@ -303,6 +303,7 @@ int main(int argc, char **argv) {
     char *cmd;
     char *record;
     char line[MAX_LENGTH];
+    
 
     //Create hash table at variable ht
     ht_t *ht = ht_create();
@@ -313,40 +314,81 @@ int main(int argc, char **argv) {
 
     //Populate hash table with file values
     FILE *fpointer;
+    FILE *outputfile;
     char *token;
     int i;
-    //Be careful when using both of these - writing over past variable
     char *key;
     char *first;
     char *last;
     char *zip;
     char *voted;
-    const char setno[20]="NO";
-    char bug[]="bug";
-    //Append NO to file
-    fpointer = fopen("voters50.csv","a"); 
+    char no[]=" NO";
+ 
+   
+
+    // outputfile = fopen(tmp,"w");
+    // //Code from https://stackoverflow.com/questions/29233864/add-same-text-to-end-of-each-line-in-file-from-c
+    // int ch;
+     
+    //     for (;;) {
+         
+    //         int ch = fgetc(fpointer);
+    //         if (ch == '\n') {
+    //             // fputs("NO", outputfile);
+    //         if (ch == EOF) {
+    //             break; 
+    //         }
+    //     }
+    //     fputc(ch, outputfile);
+    // }
+    // fclose(fpointer);
+    // fclose(outputfile);
+    // remove("voters500.csv");
+    // rename(tmp, "voters500.csv");
+    // Append NO to file
+    // fpointer = fopen("voters50.csv","a+"); 
+
+    // const char setno[20]="NO";
+    char tmp[100];
+    FILE *outfile;
+   
     char singleLine[150];
+    fpointer = fopen("voters50.csv","r"); 
+    outfile = fopen("outfile.txt","w");
+    
     while(!feof(fpointer)){ //file end of file - while not end of file
+        int ch;
+        for (;;) {
+            int ch = fgetc(fpointer);
+            if (ch == '\n' || ch == EOF) {
+            fputs(no, outfile);
+            }
+            fputc(ch, outfile);
+        }
+    }
+
         //Run this loop from beginning of file to the end
         //Default- file pointer starts at the beginning
-        fgets(singleLine, 150, fpointer); //gets one line from FILE, not from standard input like keyboard
-        //Tokenize line
-        token = strtok(singleLine, " ");
-        i=0;
-        while (token != NULL){
-            //For each line - assign key,first,last,zip
-            // printf("%s\n", token); //Token = 100108 - KASEY
-            if (i == 3){
-                fputs("NO",fpointer);
-            }
-            printf("%s\n",token);
-            token = strtok(NULL, " "); 
-            i++;
-            // printf("%i\n",i);
-        }
+        // fgets(singleLine, 150, fpointer); //gets one line from FILE, not from standard input like keyboard
+        
+        // fprintf(fpointer,"%s\n",no);
+        // printf("%s\n",singleLine);
+    //     while (token != NULL){
+    //         //For each line - assign key,first,last,zip
+    //         // printf("%s\n", token); //Token = 100108 - KASEY
+    //         if (i == 3){
+    //             fputs("NO",fpointer);
+    //         }
+    //         printf("%s\n",token);
+    //         token = strtok(NULL, " "); 
+    //         i++;
+    //         // printf("%i\n",i);
+    //     }
        
-    }
-    fclose(fpointer);
+    // }
+  
+  fclose(fpointer);
+  fclose(outfile);
 
     //Read file
     //Make entry with each line
