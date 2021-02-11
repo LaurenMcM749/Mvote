@@ -1,7 +1,24 @@
 // # I used hash table implementation code from https://steemit.com/programming/@drifter1/programming-c-hashtables-with-chaining
 // I used file reading and printing function from https://www.programiz.com/c-programming/examples/read-file
 //I used hash table implementation code https://github.com/engineer-man/youtube/blob/master/077/hashtable.c
+// //I used file reading and writing code, to add something to the end of a line, from https://stackoverflow.com/questions/29233864/add-same-text-to-end-of-each-line-in-file-from-c
 // Arrow is dot operator but for pointers (assign things using ->)
+
+//char *strtok(char *str, const char *delim) - breaks string str into a series of tokens using the delimiter delim.
+    //strtok(string,string that contains each character we want to break at)
+    //strtok(str, " ")
+    //returns char* (pointer to next occurence of each piece of our string)
+    //first time we call it, it will return first piece of our string
+    //%s char* 
+    //How to print every word - 
+    //After runs, still retains its memory - for next piece of our string,  call strtok with same 2nd parameter but now with first paramter NULL
+    //just use previous one and continue giving us pieces of that string
+    //How do we know we reached the end? Once you already reached the last piece, just return NULL
+
+    //stderr stands for standard error stream. Here it is the console -- the screen
+    //The standard practice is to redirect all error messages to stderr
+    //fprintf is basically similar to printf, but takes extra parameter stderr 
+
 
 //Steps
 // 8. Make read from file
@@ -304,7 +321,6 @@ int main(int argc, char **argv) {
     char *record;
     char line[MAX_LENGTH];
     
-
     //Create hash table at variable ht
     ht_t *ht = ht_create();
     ht_set(ht,"rin","mcmillen","lauren","zip","n");
@@ -312,140 +328,83 @@ int main(int argc, char **argv) {
     ht_set(ht,"rin2","mcmillen","lauren","zip","YES");
     ht_dump(ht);
 
-    //Populate hash table with file values
+  
     FILE *fpointer;
-    FILE *outputfile;
+    FILE *outfile;
     char *token;
     int i;
+    int fsize;
     char *key;
     char *first;
     char *last;
     char *zip;
     char *voted;
     char no[]=" NO";
- 
-   
-
-    // outputfile = fopen(tmp,"w");
-    // //Code from https://stackoverflow.com/questions/29233864/add-same-text-to-end-of-each-line-in-file-from-c
-    // int ch;
-     
-    //     for (;;) {
-         
-    //         int ch = fgetc(fpointer);
-    //         if (ch == '\n') {
-    //             // fputs("NO", outputfile);
-    //         if (ch == EOF) {
-    //             break; 
-    //         }
-    //     }
-    //     fputc(ch, outputfile);
-    // }
-    // fclose(fpointer);
-    // fclose(outputfile);
-    // remove("voters500.csv");
-    // rename(tmp, "voters500.csv");
-    // Append NO to file
-    // fpointer = fopen("voters50.csv","a+"); 
-
-    // const char setno[20]="NO";
-    char tmp[100];
-    FILE *outfile;
-   
     char singleLine[150];
     fpointer = fopen("voters50.csv","r"); 
     outfile = fopen("outfile.txt","w");
-    
+    // Initialize all voted as NO by writing NO to end of every line in text file
     while(!feof(fpointer)){ //file end of file - while not end of file
         int ch;
         for (;;) {
             int ch = fgetc(fpointer);
-            if (ch == '\n' || ch == EOF) {
-            fputs(no, outfile);
+            if (ch == '\n') {
+                fputs(no, outfile);
+                
             }
+            if (feof(fpointer)){
+                break;
+            }
+           
             fputc(ch, outfile);
         }
+         
     }
-
-        //Run this loop from beginning of file to the end
-        //Default- file pointer starts at the beginning
-        // fgets(singleLine, 150, fpointer); //gets one line from FILE, not from standard input like keyboard
-        
-        // fprintf(fpointer,"%s\n",no);
-        // printf("%s\n",singleLine);
-    //     while (token != NULL){
-    //         //For each line - assign key,first,last,zip
-    //         // printf("%s\n", token); //Token = 100108 - KASEY
-    //         if (i == 3){
-    //             fputs("NO",fpointer);
-    //         }
-    //         printf("%s\n",token);
-    //         token = strtok(NULL, " "); 
-    //         i++;
-    //         // printf("%i\n",i);
-    //     }
-       
-    // }
-  
-  fclose(fpointer);
-  fclose(outfile);
-
+    
+    fclose(fpointer);
+    fclose(outfile);
+    
     //Read file
     //Make entry with each line
     // fpointer = fopen("voters50.csv","r"); 
-    // char singleLine[150];
-    // while(!feof(fpointer)){ //file end of file - while not end of file
-    //     //Run this loop from beginning of file to the end
-    //     //Default- file pointer starts at the beginning
-    //     fgets(singleLine, 150, fpointer); //gets one line from FILE, not from standard input like keyboard
-    //     //Tokenize line
-    //     token = strtok(singleLine, " ");
-    //     i=0;
-    //     while (token != NULL){
-    //         //For each line - assign key,first,last,zip
-    //         printf("%s\n", token); 
-    //         if (i==0){
-    //             key = token;
-    //         }
-    //         if (i == 1){
-    //             last = token;
-    //         }
-    //         if (i == 2){
-    //             first = token;
-    //         }
-    //         if (i == 3){
-    //             zip = token;
-    //         }
-    //         if (i == 4){
-    //             voted = token;
-    //         }
-    //         token = strtok(NULL, " "); 
-    //         i++;
-    //     }
-    //     //Set entry->voted = "NO"
-    //     // memset(voted, '\0', sizeof(voted));
-    //     *voted = "NO"; //seg fault here
-    //     printf("%s\n",bug);
-    //     //Insert each entry (use i)
-    //     ht_set(ht, key, last, first, zip, voted);
-    // }
-    // fclose(fpointer);
+    outfile = fopen("outfile.txt","r");
+    while(!feof(outfile)){ //file end of file - while not end of file
+        //Run this loop from beginning of file to the end
+        //Default- file pointer starts at the beginning
+        fgets(singleLine, 150, outfile); //gets one line from FILE, not from standard input like keyboard
+        fsize++;
+        //Tokenize line
+        token = strtok(singleLine, " ");
+        i=0;
+        while (token != NULL){
+            //For each line - assign key,first,last,zip
+            // printf("%s\n", token); 
+            if (i==0){
+                key = token;
+            }
+            if (i == 1){
+                last = token;
+            }
+            if (i == 2){
+                first = token;
+            }
+            if (i == 3){
+                zip = token;
+            }
+            if (i == 4){
+                voted = token;
+            }
+            token = strtok(NULL, " "); 
+            i++;
+        }
+        //Insert each entry (use i)
+        ht_set(ht, key, last, first, zip, voted);
+        
+    }
+    printf("%d\n",fsize);
+    fclose(outfile);
 
-    //char *strtok(char *str, const char *delim) - breaks string str into a series of tokens using the delimiter delim.
-    //strtok(string,string that contains each character we want to break at)
-    //strtok(str, " ")
-    //returns char* (pointer to next occurence of each piece of our string)
-    //first time we call it, it will return first piece of our string
-    //%s char* 
-    //How to print every word - 
-    //After runs, still retains its memory - for next piece of our string,  call strtok with same 2nd parameter but now with first paramter NULL
-    //just use previous one and continue giving us pieces of that string
-    //How do we know we reached the end? Once you already reached the last piece, just return NULL
-
-    //stderr stands for standard error stream. Here it is the console -- the screen
-    //The standard practice is to redirect all error messages to stderr
-    //fprintf is basically similar to printf, but takes extra parameter stderr 
-
+    
     while (1) {
       
       printf("\n");
