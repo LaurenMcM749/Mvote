@@ -32,7 +32,7 @@
 #include <unistd.h> //for chdir
 
 //Table size represents max items you store before collision
-#define TABLE_SIZE 20000
+int TABLE_SIZE;
 //Definitions for command line
 #define MAX_LENGTH 1024
 #define DELIMS " \t\r\n"
@@ -297,12 +297,12 @@ void ht_dump(ht_t *hashtable) {
             continue;
         }
 
-        printf("slot[%4d]: ", i);
+        printf("slot[%d]: ", i);
 
         for(;;) {
             // Print more here !!
             // TODO - Validate format specifiers.
-            printf("%s=%s %s %s %s", entry->key, entry->last, entry->first, entry->zip, entry->voted);
+            printf("%s %s %s %s %s", entry->key, entry->last, entry->first, entry->zip, entry->voted);
 
             if (entry->next == NULL) {
                 break;
@@ -320,20 +320,11 @@ int main(int argc, char **argv) {
     char *cmd;
     char *record;
     char line[MAX_LENGTH];
-    
-    //Create hash table at variable ht
-    ht_t *ht = ht_create();
-    ht_set(ht,"rin","mcmillen","lauren","zip","n");
-    ht_set(ht,"rin1","mcmillen","lauren","zip","YES");
-    ht_set(ht,"rin2","mcmillen","lauren","zip","YES");
-    ht_dump(ht);
-
-  
     FILE *fpointer;
     FILE *outfile;
     char *token;
     int i;
-    int fsize;
+    int fsize = 0;
     char *key;
     char *first;
     char *last;
@@ -350,6 +341,7 @@ int main(int argc, char **argv) {
             int ch = fgetc(fpointer);
             if (ch == '\n') {
                 fputs(no, outfile);
+                fsize++;
                 
             }
             if (feof(fpointer)){
@@ -360,9 +352,18 @@ int main(int argc, char **argv) {
         }
          
     }
-    
+    fsize++;
+    TABLE_SIZE=fsize;
+
     fclose(fpointer);
     fclose(outfile);
+
+    ht_t *ht = ht_create();
+    // ht_set(ht,"rin","mcmillen","lauren","zip","n");
+    // ht_set(ht,"rin1","mcmillen","lauren","zip","YES");
+    // ht_set(ht,"rin2","mcmillen","lauren","zip","YES");
+    // ht_dump(ht);
+
     
     //Read file
     //Make entry with each line
@@ -372,7 +373,7 @@ int main(int argc, char **argv) {
         //Run this loop from beginning of file to the end
         //Default- file pointer starts at the beginning
         fgets(singleLine, 150, outfile); //gets one line from FILE, not from standard input like keyboard
-        fsize++;
+       
         //Tokenize line
         token = strtok(singleLine, " ");
         i=0;
@@ -399,11 +400,12 @@ int main(int argc, char **argv) {
         }
         //Insert each entry (use i)
         ht_set(ht, key, last, first, zip, voted);
-        
     }
-    printf("%d\n",fsize);
     fclose(outfile);
 
+    //Create hash table at variable ht
+ 
+    ht_dump(ht);
     
     while (1) {
       
