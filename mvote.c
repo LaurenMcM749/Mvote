@@ -2,6 +2,7 @@
 // I used file reading and printing function from https://www.programiz.com/c-programming/examples/read-file
 //I used hash table implementation code https://github.com/engineer-man/youtube/blob/master/077/hashtable.c
 // //I used file reading and writing code, to add something to the end of a line, from https://stackoverflow.com/questions/29233864/add-same-text-to-end-of-each-line-in-file-from-c
+//I learned how to pass a file from the command line from https://stackoverflow.com/questions/22822393/pass-file-as-command-line-argument
 // Arrow is dot operator but for pointers (assign things using ->)
 
 //char *strtok(char *str, const char *delim) - breaks string str into a series of tokens using the delimiter delim.
@@ -55,6 +56,14 @@ typedef struct entry_t {
 typedef struct {
     entry_t **entries;
 } ht_t;
+
+//Zip list for participants who have voted YES
+typedef struct zipnode {
+    char * zipkey; //head of list = zip code
+    // struct entry_t *entry; //Pointer to the entries with same zip code (doesn't point to zip code - points to RIN/key)
+    //Pointer to a third linked list which stores pointer to participants data
+    struct zipnode *next; //pointer to next list of zip codes
+} zipnode;
 
 //Hash function
 //Must return value between 0 and SIZE-1
@@ -315,7 +324,47 @@ void ht_dump(ht_t *hashtable) {
     }
 }
 
-int main(int argc, char **argv) {
+//I got code to create and print linked list from https://www.youtube.com/watch?v=7Fz7JSvlr9g&t=607s
+
+zipnode * createZipList(int n,char * zipkey){
+    
+    int i = 0;
+    zipnode *head = NULL;
+    zipnode *temp = NULL;
+    zipnode *p = NULL;
+
+    temp = (zipnode*)malloc(sizeof(zipnode));
+    temp->zipkey = zipkey;
+    temp->next = NULL;
+
+    if (head == NULL){
+        head = temp;
+    }
+    else
+    {
+        p = head;
+        while(p->next != NULL){
+            p = p->next;
+        }
+        p->next = head;
+    }
+
+    return head;
+
+};
+
+void displayZipList(zipnode *head){
+
+    zipnode * p = head;
+
+    while(p->next!=NULL){
+        printf("%s\n", p->zipkey);
+        p = p->next;
+    }
+}
+
+int main(int argc, char *argv[]) {
+
 
     char *cmd;
     char *record;
@@ -332,7 +381,7 @@ int main(int argc, char **argv) {
     char *voted;
     char no[]=" NO";
     char singleLine[150];
-    fpointer = fopen("voters50.csv","r"); 
+    fpointer = fopen(argv[1],"r"); 
     outfile = fopen("outfile.txt","w");
     // Initialize all voted as NO by writing NO to end of every line in text file
     while(!feof(fpointer)){ //file end of file - while not end of file
@@ -483,6 +532,7 @@ int main(int argc, char **argv) {
                     ht_dump(ht);
             }
         //r - Mark as YES
+        //Should I initiate ziplist here?
         else if (strcmp(cmd, "r") == 0) {
             int i;
             char yes[]="This user has voted already.";
@@ -635,6 +685,68 @@ int main(int argc, char **argv) {
                 printf("%f%s",perc,sign);
             }
         }
+        //Z <zipcode>- Show all people who have voted (YES) in this zipcode
+           else if (strcmp(cmd, "z") == 0) {
+                int i;
+                int c;
+                char * zipkey;
+                char *arg1 = strtok(0, DELIMS);
+
+            //If argument then say v does not take arguments
+            if (!arg1) //if no arguments
+                fprintf(stderr, "z needs 1 argument - zip code\n"); 
+
+            else
+                //Loop through list
+                //If entry->zipkey == arg1
+                    //Loop through entry_t
+                    //Print entry_t
+                //Create zip
+             
+            {   //Make list
+                char display[]="display after";
+                zipkey = arg1;
+                //length will always be 3
+                zipnode *newzipnode;
+                newzipnode = createZipList(2,zipkey);
+                //Print list
+                // displayZipList(newzipnode);
+                zipnode * p = newzipnode;
+                //Doesn't go into while loop because p->next = NULL
+                printf("%s\n", p->zipkey);
+                while(p->next!=NULL){
+                    printf("%s\n", p->zipkey);
+                    p = p->next;
+                }
+            
+                
+
+
+
+                // //Loop through entire hash table
+                // for (int i = 0; i < TABLE_SIZE; ++i) {
+                //     entry_t *entry = ht->entries[i];
+                //     //If nothing in entry, igrnoed
+                //     if (entry == NULL) {
+                //         continue;
+                //     }
+                //     //For each entry in table
+                //     for(;;) {
+                //         if(strcmp(entry->voted, "YES")== 0){   //If yes, add to ziplist
+                //             zipkey = entry->zip;
+                //             createZipList(2,zipkey);
+                //             // displayZipList(zipkey); 
+                //         };
+                //         if (entry->next == NULL) {
+                //             break;
+                //         }
+                //         entry = entry->next;
+                //     }
+                // }
+                
+            }
+        }
+
 
         //in case exit is typed
         else if (strcmp(cmd, "exit") == 0) 
@@ -653,3 +765,4 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+
