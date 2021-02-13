@@ -356,7 +356,7 @@ void displayZipList(zipnode *head){
     zipnode * p = head;
 
     while(p!=NULL){ //while(p->next != NULL)
-        printf("%s\n", p->zipkey);
+        printf("%s ", p->zipkey);
         p = p->next;
     }
 }
@@ -703,7 +703,7 @@ int main(int argc, char *argv[]) {
                 int c = 0;
                 char invalid[]="invalid entry- entry is not YES nor NO";
                 char ignore[]="entry->zip in firstnode, ignore";
-                char notnull[]="firstnode not null";
+                char notnull[]="second node created";
                 zipnode *firstnode; //Init first node
                 //use arg1 somehwere
                 //For each entry that is YES, check if zip in list.
@@ -713,7 +713,6 @@ int main(int argc, char *argv[]) {
                     entry_t *entry = ht->entries[i];
                     //At i = 4, cannot get ht->entries[4] so seg fault
                     //If nothing in entry, igrnoed
-                 
                     if (entry == NULL) {
                         continue;
                     }
@@ -732,10 +731,12 @@ int main(int argc, char *argv[]) {
                         //If not first node, then check if entry->zip is in ziplist
                         zipnode *secnode; //Make second node
                         while(firstnode != NULL){ //While firstnode exists -this could be seg fault
-                            printf("%s\n",notnull);
+                           //gets to here
                             if( strcmp(entry->zip, firstnode->zipkey) != 0){ //If entry->zip not firstnode->zipkey
                                 secnode = createZipList(2,entry->zip); // Create second node with the entry->zip 
+                                printf("%s\n",notnull); //this goes forever
                                 firstnode->next = secnode; //Set first node->next to secnode
+                                break;
                             }
                             else { //If entry->zip in firstnode, ignore 
                                 printf("%s\n",ignore); //continue makes it go forever!!
