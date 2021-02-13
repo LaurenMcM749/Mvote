@@ -309,8 +309,6 @@ void ht_dump(ht_t *hashtable) {
         printf("slot[%d]: ", i);
 
         for(;;) {
-            // Print more here !!
-            // TODO - Validate format specifiers.
             printf("%s %s %s %s %s", entry->key, entry->last, entry->first, entry->zip, entry->voted);
 
             if (entry->next == NULL) {
@@ -357,7 +355,7 @@ void displayZipList(zipnode *head){
 
     zipnode * p = head;
 
-    while(p->next!=NULL){
+    while(p!=NULL){ //while(p->next != NULL)
         printf("%s\n", p->zipkey);
         p = p->next;
     }
@@ -401,7 +399,7 @@ int main(int argc, char *argv[]) {
         }
          
     }
-    fsize++;
+    fsize=fsize+1;
     TABLE_SIZE=fsize;
 
     fclose(fpointer);
@@ -697,55 +695,66 @@ int main(int argc, char *argv[]) {
                 fprintf(stderr, "z needs 1 argument - zip code\n"); 
 
             else
-                //Loop through list
-                //If entry->zipkey == arg1
-                    //Loop through entry_t
-                    //Print entry_t
-                //Create zip
-             
-            {   //Make list
-                char display[]="display after";
+            {   //Make list of anyone who has voted yes
                 zipkey = arg1;
-                //length will always be 3
-                zipnode *newzipnode;
-                newzipnode = createZipList(2,zipkey);
-                //Print list
-                // displayZipList(newzipnode);
-                zipnode * p = newzipnode;
-                //Doesn't go into while loop because p->next = NULL
-                printf("%s\n", p->zipkey);
-                while(p->next!=NULL){
-                    printf("%s\n", p->zipkey);
-                    p = p->next;
-                }
-            
+                char bug[]="bug";
+                char passover[]="Voted = NO -> Pass over";
+                char yes[]="- YES - Add to list";
+                int c = 0;
+                char invalid[]="invalid entry- entry is not YES nor NO";
+                char ignore[]="entry->zip in firstnode, ignore";
+                char notnull[]="firstnode not null";
+                zipnode *firstnode; //Init first node
+                //use arg1 somehwere
+                //For each entry that is YES, check if zip in list.
+                //Loop through entire hash table
                 
-
-
-
-                // //Loop through entire hash table
-                // for (int i = 0; i < TABLE_SIZE; ++i) {
-                //     entry_t *entry = ht->entries[i];
-                //     //If nothing in entry, igrnoed
-                //     if (entry == NULL) {
-                //         continue;
-                //     }
-                //     //For each entry in table
-                //     for(;;) {
-                //         if(strcmp(entry->voted, "YES")== 0){   //If yes, add to ziplist
-                //             zipkey = entry->zip;
-                //             createZipList(2,zipkey);
-                //             // displayZipList(zipkey); 
-                //         };
-                //         if (entry->next == NULL) {
-                //             break;
-                //         }
-                //         entry = entry->next;
-                //     }
-                // }
+                for (int i = 0; i < TABLE_SIZE-1; ++i) {
+                    entry_t *entry = ht->entries[i];
+                    //At i = 4, cannot get ht->entries[4] so seg fault
+                    //If nothing in entry, igrnoed
+                 
+                    if (entry == NULL) {
+                        continue;
+                    }
+                    for(;;) { //This is the for loop that goes once per entry, not slot
+                        if (strcmp((entry->voted), "NO\n") == 0){ //If entry is NO, ignore //This works
+                            printf("%s\n",passover); //prints 4 times before breaking
+                        }
+                    if (strcmp(entry->voted, "YES") == 0){  //If entry is YES, add zipcode to the zip list if not already in zip list
+                        //First, check if entry->zip (4012) is the zipkey of any node in the list
+                        //Make this a node for sure if this is the first time
+                        printf("%s %s\n",entry->zip,yes); 
+                        if(c == 0){
+                            firstnode = createZipList(2,entry->zip); //Make first node with entry->zip (YES)
+                            c++; //Increment c after first loop
+                        }
+                        //If not first node, then check if entry->zip is in ziplist
+                        zipnode *secnode; //Make second node
+                        while(firstnode != NULL){ //While firstnode exists -this could be seg fault
+                            printf("%s\n",notnull);
+                            if( strcmp(entry->zip, firstnode->zipkey) != 0){ //If entry->zip not firstnode->zipkey
+                                secnode = createZipList(2,entry->zip); // Create second node with the entry->zip 
+                                firstnode->next = secnode; //Set first node->next to secnode
+                            }
+                            else { //If entry->zip in firstnode, ignore 
+                                printf("%s\n",ignore); //continue makes it go forever!!
+                                break;
+                            }
+                            // current = current->next;  firstnode->next = secnode;
+                        }
+                    }
+                    if (entry->next == NULL) {
+                        break;
+                        }
+                    entry = entry->next;
+                }   
+                    //Print list
+                    displayZipList(firstnode);
+                }
                 
             }
-        }
+         }
 
 
         //in case exit is typed
