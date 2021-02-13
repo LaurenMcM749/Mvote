@@ -57,13 +57,21 @@ typedef struct {
     entry_t **entries;
 } ht_t;
 
+//Linked list storing pointers to rins in hash table
+typedef struct zip2listnode{
+    struct entry_t *keynode;
+    struct zip2listnode *next; 
+} zip2listnode;
+
 //Zip list for participants who have voted YES
 typedef struct zipnode {
     char * zipkey; //head of list = zip code
-    // struct entry_t *entry; //Pointer to the entries with same zip code (doesn't point to zip code - points to RIN/key)
+    struct zip2listnode *zip2listnode; //Pointer to the entries with same zip code (doesn't point to zip code - points to RIN/key)
     //Pointer to a third linked list which stores pointer to participants data
     struct zipnode *next; //pointer to next list of zip codes
 } zipnode;
+
+
 
 //Hash function
 //Must return value between 0 and SIZE-1
@@ -333,6 +341,7 @@ zipnode * createZipList(int n,char * zipkey){
 
     temp = (zipnode*)malloc(sizeof(zipnode));
     temp->zipkey = zipkey;
+    temp->zip2listnode = NULL;
     temp->next = NULL;
 
     if (head == NULL){
@@ -351,12 +360,32 @@ zipnode * createZipList(int n,char * zipkey){
 
 };
 
-void displayZipList(zipnode *head){
+void displayZip2NodeList(zip2listnode *head, ht_t *hashtable ){
+
+     zip2listnode * p = head;
+     char * record;
+    char test[]="newtest";
+    printf("%s\n",test);
+
+    //TODO - p = NULL - this is the bug
+    while(p!=NULL){ //while(p->next != NULL)
+        // printf("%s", p->key);
+        record = ht_get(hashtable, p->keynode->key); //Returns record
+        printf("%s\n",record);
+        
+        p = p->next;
+    }
+
+};
+
+void displayZipList(zipnode *head, ht_t *hashtable){
 
     zipnode * p = head;
+   
 
     while(p!=NULL){ //while(p->next != NULL)
-        printf("%s ", p->zipkey);
+        printf("%s", p->zipkey);
+        displayZip2NodeList(p->zip2listnode, hashtable);
         p = p->next;
     }
 }
@@ -751,7 +780,7 @@ int main(int argc, char *argv[]) {
                     entry = entry->next;
                 }   
                     //Print list
-                    displayZipList(firstnode);
+                    displayZipList(firstnode,ht);
                 }
                 
             }
